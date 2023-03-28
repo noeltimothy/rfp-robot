@@ -13,7 +13,7 @@ from google.cloud import storage
 
 username = 'jeremy@servant7.com' #config['username']
 password = 'tester123' #config['password']
-BUCKET_NAME = 'test'
+BUCKET_NAME = 'us.artifacts.heroic-goal-307405.appspot.com'
 
 headers = {
     'Host': 'rfpalooza.com',
@@ -32,10 +32,6 @@ headers = {
 
 def list_files():
     storage_client = storage.Client()
-    try:
-        bucket = storage_client.create_bucket(BUCKET_NAME)
-    except Exception as e:
-        pass
     blobs = storage_client.list_blobs(BUCKET_NAME)
     return [ x.name for x in blobs ]
   
@@ -55,7 +51,7 @@ def save_pdf(pdf_link, existing):
         storage_client = storage.Client()
         bucket = storage_client.bucket(BUCKET_NAME)
         blob = bucket.blob(filename)
-        with blob.open('w') as f:
+        with blob.open('wb') as f:
             f.write(r)
         return filename
 
@@ -95,9 +91,8 @@ def rfp_robot1(req):
           #[ save_pdf(x) for x in pdf_links ]
 
           existing = list_files()
-          new_file = save_pdf(pdf_links[0], existing)
-          if new_file:
-              new_files.append(new_file)
+          saved = [ save_pdf(x, existing) for x in pdf_links ]
+          new_files = [ x for x in saved if x ]
 
     return new_files
       
