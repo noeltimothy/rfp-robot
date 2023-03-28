@@ -94,9 +94,10 @@ def rfp_robot1(req):
           pdf_links = [ x['href'] for x in msoup.find_all('a') if x['href'].endswith('.pdf') ]
           #[ save_pdf(x) for x in pdf_links ]
 
-          existing = list_files('test')
-          new_files.append(save_pdf(pdf_links[0], existing))
-          
+          existing = list_files()
+          new_file = save_pdf(pdf_links[0], existing)
+          if new_file:
+              new_files.append(new_file)
 
-    return { existing, new_files }
+    return new_files
       
